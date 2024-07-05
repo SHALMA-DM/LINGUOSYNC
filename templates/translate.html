@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Language Translator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: rgb(14, 17, 23); /* Dark gray background color */
+            color: #fff; /* White text color */
+        }
+        .btn-custom {
+            background-color: rgb(14, 17, 23);
+            border-color: #808080;
+            border-radius: 6px; 
+            color: #ffffff;
+        }
+
+        .btn-custom:hover {
+            border-color: #FF0000; 
+            color: #FF0000;
+        }
+        .dropdown-menu-custom {
+            background-color: #457b9d; /* Custom background color for dropdown menu */
+        }
+        .col{
+            width:43rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid d-flex align-items-center justify-content-center vh-100 vw-200">
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center mb-4">Language Translator</h1>
+                <form id="translate-form" method="post" action="{% url 'translate' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="from_language" class="form-label">Select Source Language:</label>
+                        <select class="form-select" name="from_language" id="from_language">
+                            {% for language in languages %}
+                                <option value="{{ language }}">{{ language }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="to_language" class="form-label">Select Target Language:</label>
+                        <select class="form-select" name="to_language" id="to_language">
+                            {% for language in languages %}
+                                <option value="{{ language }}">{{ language }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-custom">Start</button>
+                </form>
+                <button id="stop-btn" class="btn-custom mt-3">Stop</button>
+                
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Debugging: Print languages variable -->
+    {% comment %} <pre>{{ languages }}</pre> {% endcomment %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#translate-form').submit(function(event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
+                $('#translation-status').text('Translating...');
+                $.ajax({
+                    type: 'POST',
+                    url: '/',  
+                    data: formData,
+                    success: function(response) {
+                    // Handle success response
+                    // if (response.success) {
+                    //    var audioPath = response.audio_file_path;
+                    //    $('#audio-source').attr('src', audioPath);
+                    //    $('#audio-player').show();
+                    //    $('#audio-player').get(0).play(); // Auto-play audio
+                    //} else { 
+                    //    // Handle error if needed
+                    //    console.log(response.error_message);
+                    //}
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+            });
+        
+            $('#stop-btn').click(function() {
+            });
+        });   
+        window.onload = function() {
+            var audioPlayer = document.getElementById('audio-player');
+            audioPlayer.style.display = 'none';
+        };     
+    </script>
+    <!-- Audio Player -->
+    {% comment %} <audio id="audio-player" controls autoplay style="display: none;">
+        <source id="audio-source" src="http://127.0.0.1:8000/output.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio> {% endcomment %}
+    
+</body>
+</html>
