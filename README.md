@@ -1,0 +1,2 @@
+# LINGUOSYNC
+ Language translator bot
